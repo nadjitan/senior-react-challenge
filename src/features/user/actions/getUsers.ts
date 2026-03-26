@@ -25,13 +25,13 @@ export const getUsers = async ({
   const hasQuery = !!query?.trim();
   const hasGender = !!gender;
 
-  if (hasGender) {
+  if (hasQuery || (hasQuery && hasGender)) {
+    url = `${API_URL}/users/search`;
+    params.append("q", query!);
+  } else if (hasGender) {
     url = `${API_URL}/users/filter`;
     params.append("key", "gender");
     params.append("value", gender!);
-  } else if (hasQuery) {
-    url = `${API_URL}/users/search`;
-    params.append("q", query!);
   }
 
   const res = await fetch(`${url}?${params.toString()}`);

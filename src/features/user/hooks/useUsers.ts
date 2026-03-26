@@ -20,22 +20,19 @@ export const useUsers = ({
   gender,
 }: UseUsersParams) => {
   const skip = (page - 1) * limit;
-  const isSearching = !!search?.trim();
+  const trimmedSearch = search?.trim();
+  const isSearching = !!trimmedSearch;
 
   const query = useQuery({
     queryKey: isSearching
-      ? USER_KEYS.search({ query: search!, limit, skip, gender })
+      ? USER_KEYS.search({ query: trimmedSearch!, limit, skip, gender })
       : USER_KEYS.list({ limit, skip, gender }),
 
-    queryFn: () =>
-      getUsers({
-        query: isSearching ? search : undefined,
-        limit,
-        skip,
-        gender,
-      }),
+    queryFn: () => getUsers({ query: trimmedSearch, limit, skip, gender }),
 
     placeholderData: keepPreviousData,
+
+    retry: 1,
   });
 
   useEffect(() => {
