@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { RefreshCw, Search } from "lucide-react";
 import { RefetchOptions } from "@tanstack/react-query";
 
@@ -31,6 +31,8 @@ export const AdminUsersFilterBar: React.FC<AdminUsersFilterBarProps> = ({
   isError,
   onRefetch,
 }) => {
+  const isFirstRender = useRef(true);
+
   const [, setPage] = usePaginationSearchParam();
   const [search, setSearch] = useQuerySearchParam();
 
@@ -40,9 +42,16 @@ export const AdminUsersFilterBar: React.FC<AdminUsersFilterBarProps> = ({
   const debouncedSearch = useDebounce(inputValue, 300);
 
   useEffect(() => {
-    setPage(1);
-    setSearch(debouncedSearch);
-  }, [debouncedSearch, setSearch, setPage]);
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
+    if (debouncedSearch !== search) {
+      setPage(1);
+      setSearch(debouncedSearch);
+    }
+  }, [debouncedSearch, setSearch, setPage, search]);
 
   const handleGenderChange = (value: UsersFilter["gender"]) => {
     setPage(1);
