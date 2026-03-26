@@ -1,11 +1,13 @@
 import { type NextPage } from "next";
+import { Suspense } from "react";
 
 import { getUsers } from "@/features/user/actions";
 import { getQueryClient } from "@/lib/get-query-client";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { USER_KEYS } from "@/features/user/keys";
+import { Spinner } from "@/components/ui/spinner";
 
 import { Presentational } from "./Presentational";
-import { USER_KEYS } from "@/features/user/keys";
 
 const Page: NextPage = async () => {
   const queryClient = getQueryClient();
@@ -17,7 +19,15 @@ const Page: NextPage = async () => {
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <Presentational />
+      <Suspense
+        fallback={
+          <div className="flex items-center gap-2 italic text-nowrap text-xs text-muted-foreground">
+            <Spinner className="h-4 w-4" /> Fetching data...
+          </div>
+        }
+      >
+        <Presentational />
+      </Suspense>
     </HydrationBoundary>
   );
 };
