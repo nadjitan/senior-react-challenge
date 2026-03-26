@@ -9,12 +9,24 @@ import { Spinner } from "@/components/ui/spinner";
 
 import { Presentational } from "./Presentational";
 
-const Page: NextPage = async () => {
+type PageProps = {
+  searchParams: Promise<{
+    page?: string;
+  }>;
+};
+
+const LIMIT = 10;
+
+const Page: NextPage<PageProps> = async ({ searchParams }) => {
   const queryClient = getQueryClient();
 
+  const pageParam = (await searchParams).page;
+  const page = Number(pageParam ?? "1");
+  const skip = (page - 1) * LIMIT;
+
   await queryClient.prefetchQuery({
-    queryKey: USER_KEYS.list({ limit: 10, skip: 0 }),
-    queryFn: () => getUsers({ limit: 10, skip: 0 }),
+    queryKey: USER_KEYS.list({ limit: LIMIT, skip }),
+    queryFn: () => getUsers({ limit: LIMIT, skip }),
   });
 
   return (
