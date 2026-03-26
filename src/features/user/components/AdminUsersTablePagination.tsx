@@ -35,17 +35,18 @@ export const AdminUsersTablePagination: React.FC<Props> = ({ usersData }) => {
   };
 
   const handlePageChange = (value: string) => {
-    // Only allow numeric input
-    if (/^[0-9]+$/.test(value)) setInputPage(Number(value));
+    // Only allow numeric input (can be zero)
+    if (/^[0-9]*$/.test(value)) setInputPage(Number(value));
   };
 
   const handlePageInputChange = () => {
-    let newPage = inputPage;
+    let newPage = Number(inputPage);
 
     if (isNaN(newPage) || newPage < 1) newPage = 1;
     if (newPage > totalPages) newPage = totalPages;
 
     setPage(newPage);
+    setInputPage(newPage);
   };
 
   const handlePageInputEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
